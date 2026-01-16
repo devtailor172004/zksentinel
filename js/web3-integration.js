@@ -5,7 +5,7 @@ class Web3Integration {
         this.account = null;
         this.chainId = null;
         this. isConnected = false;
-        this.initWeb3();
+        this. initWeb3();
     }
 
     // Check if MetaMask is installed
@@ -112,7 +112,7 @@ class Web3Integration {
             });
             console.log('✅ Polygon Mumbai added to MetaMask');
         } catch (error) {
-            console.error('Failed to add network:', error);
+            console. error('Failed to add network:', error);
         }
     }
 
@@ -135,7 +135,7 @@ class Web3Integration {
         
         if (this.isConnected && this.account) {
             if (walletButton) {
-                walletButton.textContent = `Connected:  ${this.account.substring(0, 6)}...${this.account.substring(38)}`;
+                walletButton.textContent = `Connected: ${this.account. substring(0, 6)}...${this.account.substring(38)}`;
                 walletButton.style.backgroundColor = '#00ff41';
                 walletButton.style.color = '#000000';
             }
@@ -148,7 +148,7 @@ class Web3Integration {
             }
         } else {
             if (walletButton) {
-                walletButton. textContent = 'Connect Wallet';
+                walletButton.textContent = 'Connect Wallet';
                 walletButton.style.backgroundColor = 'transparent';
                 walletButton.style.color = '#00ff41';
             }
@@ -158,9 +158,9 @@ class Web3Integration {
     // Show MetaMask not installed message
     showMetaMaskPrompt() {
         const message = `
-            ⚠️ MetaMask Not Installed!  
+            ⚠️ MetaMask Not Installed! 
             
-            Download MetaMask:  
+            Download MetaMask: 
             https://metamask.io
             
             Then refresh this page.
