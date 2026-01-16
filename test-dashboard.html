@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZKSentinel - Test Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@4.0.1/dist/web3.min. js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding:  0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            padding: 2rem;
+            font-family:  'Rajdhani', sans-serif;
+            background:  #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        h2 {
+            color: #00d2ff;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .section {
+            background: rgba(0, 0, 0, 0.8);
+            border:  2px solid #00ff41;
+            padding: 2rem;
+            margin:  2rem 0;
+            border-radius: 12px;
+            box-shadow:  0 0 20px rgba(0, 255, 65, 0.2);
+        }
+        
+        button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+            font-family: 'Orbitron', monospace;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #00d2ff;
+            box-shadow: 0 0 20px #00d2ff;
+        }
+        
+        . output {
+            background: rgba(0, 255, 65, 0.1);
+            border: 1px solid #00ff41;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .status-ok {
+            color: #00ff41;
+        }
+        
+        .status-error {
+            color: #ff0080;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 ZKSentinel Test Dashboard</h1>
+
+        <!-- Web3 / Wallet Section -->
+        <div class="section">
+            <h2>💳 Web3 & Wallet Connection</h2>
+            <button onclick="testWalletConnection()">🔗 Connect Wallet</button>
+            <button onclick="testGetBalance()">💰 Get Balance</button>
+            <button onclick="testGetAccount()">👤 Get Account Info</button>
+            <div id="wallet-output" class="output"></div>
+        </div>
+
+        <!-- Polygon Network Section -->
+        <div class="section">
+            <h2>🌐 Polygon Mumbai Network</h2>
+            <button onclick="testNetworkCheck()">🔍 Check Network</button>
+            <button onclick="testSwitchNetwork()">🔄 Switch to Mumbai</button>
+            <button onclick="testPolygonBalance()">💎 Get Polygon Balance</button>
+            <div id="network-output" class="output"></div>
+        </div>
+
+        <!-- ZK Proof Section -->
+        <div class="section">
+            <h2>🔐 ZK Proof Generation</h2>
+            <button onclick="testGenerateProof()">🎯 Generate Test Proof</button>
+            <button onclick="testVerifyProof()">✅ Verify Proof</button>
+            <button onclick="testGetProofStats()">📊 Get Proof Stats</button>
+            <div id="zk-output" class="output"></div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="section">
+            <h2>📋 Setup Summary</h2>
+            <div id="summary" class="output"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/web3-integration.js"></script>
+    <script src="js/zk-proof-generator.js"></script>
+    <script src="js/polygon-integration.js"></script>
+    <script>
+        // Wallet Tests
+        function testWalletConnection() {
+            const output = document.getElementById('wallet-output');
+            if (web3Integration. isConnected) {
+                output.textContent = `✅ Already connected!\nAccount: ${web3Integration.account}`;
+                output.classList.add('status-ok');
+            } else {
+                output.textContent = '⏳ Attempting connection...';
+                web3Integration.connectWallet().then(account => {
+                    output.textContent = `✅ Connected!\nAccount: ${account}`;
+                    output.classList.add('status-ok');
+                });
+            }
+        }
+
+        async function testGetBalance() {
+            const output = document.getElementById('wallet-output');
+            if (!web3Integration. isConnected) {
+                output. textContent = '❌ Wallet not connected! ';
+                output.classList.add('status-error');
+                return;
+            }
+            const balance = await web3Integration.getBalance();
+            output.textContent = `✅ Balance: ${balance} ETH`;
+            output.classList.add('status-ok');
+        }
+
+        function testGetAccount() {
+            const output = document.getElementById('wallet-output');
+            const info = web3Integration.getAccountInfo();
+            output.textContent = `Account Info:\n${JSON.stringify(info, null, 2)}`;
+            output.classList.add('status-ok');
+        }
+
+        // Network Tests
+        async function testNetworkCheck() {
+            const output = document.getElementById('network-output');
+            output.textContent = '⏳ Checking network...';
+            const isConnected = await polygonIntegration.checkNetwork();
+            const info = polygonIntegration.getNetworkInfo();
+            output. textContent = `Network Info:\n${JSON.stringify(info, null, 2)}`;
+            if (isConnected) {
+                output.classList.add('status-ok');
+            } else {
+                output.classList.add('status-error');
+            }
+        }
+
+        async function testSwitchNetwork() {
+            const output = document.getElementById('network-output');
+            output.textContent = '⏳ Switching to Mumbai...';
+            await web3Integration.switchToPolygonMumbai();
+            output. textContent = '✅ Network switched!  Please refresh page.';
+            output.classList.add('status-ok');
+        }
+
+        async function testPolygonBalance() {
+            const output = document.getElementById('network-output');
+            if (!web3Integration.isConnected) {
+                output.textContent = '❌ Wallet not connected!';
+                output.classList.add('status-error');
+                return;
+            }
+            output.textContent = '⏳ Getting balance... ';
+            const balance = await polygonIntegration.getPolygonBalance();
+            output.textContent = `✅ Polygon Balance: ${balance} MATIC`;
+            output.classList.add('status-ok');
+        }
+
+        // ZK Proof Tests
+        function testGenerateProof() {
+            const output = document.getElementById('zk-output');
+            const testData = {
+                raceId: 'RACE_001',
+                playerAddress: web3Integration.account || '0x123...789',
+                lapTime: 125. 5,
+                coinsEarned: 150,
+                position: 1
+            };
+            const proof = zkProofGenerator.generateRaceProof(testData);
+            output.textContent = `Proof Generated:\n${JSON.stringify(proof, null, 2)}`;
+            output.classList.add('status-ok');
+        }
+
+        function testVerifyProof() {
+            const output = document.getElementById('zk-output');
+            const stats = zkProofGenerator.getProofStats();
+            
+            if (stats.totalProofs === 0) {
+                output.textContent = '❌ No proofs to verify!  Generate one first.';
+                output.classList.add('status-error');
+                return;
+            }
+
+            const proofs = zkProofGenerator.proofs;
+            const lastProof = proofs[proofs.length - 1];
+            const isVerified = zkProofGenerator.verifyProof(lastProof);
+            
+            output.textContent = `Proof Verification:\n${JSON. stringify({
+                proofId: lastProof.id,
+                verified: isVerified,
+                playerAddress: lastProof.playerAddress
+            }, null, 2)}`;
+            output.classList.add('status-ok');
+        }
+
+        function testGetProofStats() {
+            const output = document. getElementById('zk-output');
+            const stats = zkProofGenerator.getProofStats();
+            output.textContent = `Proof Statistics:\n${JSON.stringify(stats, null, 2)}`;
+            output.classList.add('status-ok');
+        }
+
+        // Summary
+        function generateSummary() {
+            const summary = document.getElementById('summary');
+            const info = {
+                'Web3 Status': web3Integration ?  'Initialized ✅' : 'Not initialized ❌',
+                'Wallet Connected': web3Integration. isConnected ? 'Yes ✅' : 'No ❌',
+                'Wallet Address': web3Integration.account || 'Not connected',
+                'ZK Proof Engine': zkProofGenerator ? 'Ready ✅' : 'Not ready ❌',
+                'Polygon Integration': polygonIntegration ? 'Ready ✅' : 'Not ready ❌',
+                'Current Network': polygonIntegration. networkName,
+                'Polygon Chain ID': polygonIntegration. chainId
+            };
+            
+            summary. textContent = Object.entries(info)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join('\n');
+        }
+
+        // Run summary on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(generateSummary, 1000);
+        });
+    </script>
+</body>
+</html>
